@@ -7,13 +7,15 @@ import { LoginScreen } from "@/components/LoginScreen";
 import { OnboardingScreen } from "@/components/OnboardingScreen";
 import { ProfileScreen } from "@/components/ProfileScreen";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { useAuth } from "@/contexts/AuthContext";
-import { useUser } from "@/contexts/UserContext";
+import { useAuthStore } from "@/stores/authStore";
+import { useUserStore } from "@/stores/userStore";
+import { useCompleteOnboarding } from "@/queries/userQueries";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function Page() {
-  const { user, loading: authLoading } = useAuth();
-  const { userData, loading: userLoading, initiatingAccess, addingProfileInfo, completeOnboarding } = useUser();
+  const { user, loading: authLoading } = useAuthStore();
+  const { userData, loading: userLoading, hasCompletedOnboarding, initiatingAccess, addingProfileInfo } = useUserStore();
+  const completeOnboardingMutation = useCompleteOnboarding();
   const { colors } = useTheme();
   const [showProfile, setShowProfile] = useState(false);
 
@@ -38,32 +40,35 @@ export default function Page() {
     return <LoginScreen />;
   }
 
-  // Show "initiating personal ai access" loading screen after signup
+  // Show "Loading AI experience" loading screen after signup
   if (initiatingAccess) {
     return (
       <LoadingScreen 
-        message="Initiating personal AI access"
+        message="Loading AI experience"
         duration={2500}
       />
     );
   }
 
-  // Show "adding profile information to AI" loading screen after onboarding
+  // Show "Initialising Personalised AI" loading screen after onboarding
   if (addingProfileInfo) {
     return (
       <LoadingScreen 
-        message="Adding profile information to AI"
+        message="Initialising Personalised AI"
         duration={2500}
       />
     );
   }
 
-  // Show onboarding screen if user hasn't completed onboarding (but not if we're still initiating access)
-  if (userData && !userData.hasCompletedOnboarding && !initiatingAccess) {
+  // Show onboarding screen if:
+  // 1. User is authenticated but userData is null (new user) and not initiating access
+  // 2. User has userData but hasn't completed onboarding and not initiating access
+  // Use the store's hasCompletedOnboarding for consistent state
+  if (user && !initiatingAccess && !hasCompletedOnboarding && (!userData || !userData.hasCompletedOnboarding)) {
     return (
       <OnboardingScreen 
         onComplete={async (onboardingData) => {
-          await completeOnboarding(onboardingData);
+          await completeOnboardingMutation.mutateAsync(onboardingData);
         }}
       />
     );

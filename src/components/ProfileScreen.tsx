@@ -9,8 +9,9 @@ import {
   Alert,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
-import { useAuth } from '../contexts/AuthContext';
-import { useUser } from '../contexts/UserContext';
+import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
+import { useUpdateUserData } from '../queries/userQueries';
 
 interface Goal {
   id: string;
@@ -25,8 +26,9 @@ interface ProfileScreenProps {
 
 export function ProfileScreen({ onClose }: ProfileScreenProps) {
   const { colors } = useTheme();
-  const { logout } = useAuth();
-  const { userData, updateUserData } = useUser();
+  const { logout } = useAuthStore();
+  const { userData } = useUserStore();
+  const updateUserMutation = useUpdateUserData();
   
   const [communicationStyle, setCommunicationStyle] = useState<'descriptive' | 'concise' | 'funny'>(
     userData?.communicationStyle || 'descriptive'
@@ -59,55 +61,76 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
     { value: 'funny', label: 'Funny' },
   ];
 
-  // Auto-save effects
+  // Sync local state with userData when it changes
+  useEffect(() => {
+    if (userData) {
+      setCommunicationStyle(userData.communicationStyle || 'descriptive');
+      setDisplayName(userData.displayName || '');
+      setBio(userData.bio || '');
+      setInterests(userData.interests || []);
+      
+      // Handle goals format
+      if (userData.goals) {
+        if (Array.isArray(userData.goals)) {
+          setGoals({ personal: userData.goals, professional: [] });
+        } else {
+          setGoals(userData.goals);
+        }
+      } else {
+        setGoals({ personal: [], professional: [] });
+      }
+    }
+  }, [userData]);
+
+  // Auto-save effects with Firebase persistence
   useEffect(() => {
     if (userData && communicationStyle !== userData.communicationStyle) {
       const timer = setTimeout(() => {
-        updateUserData({ communicationStyle });
+        updateUserMutation.mutate({ communicationStyle });
       }, 1000); // Debounce for 1 second
       return () => clearTimeout(timer);
     }
-  }, [communicationStyle, userData, updateUserData]);
+  }, [communicationStyle, userData, updateUserMutation]);
 
   useEffect(() => {
     if (userData && JSON.stringify(goals) !== JSON.stringify(userData.goals)) {
       const timer = setTimeout(() => {
-        updateUserData({ goals });
+        updateUserMutation.mutate({ goals });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [goals, userData, updateUserData]);
+  }, [goals, userData, updateUserMutation]);
 
   useEffect(() => {
     if (userData && JSON.stringify(interests) !== JSON.stringify(userData.interests)) {
       const timer = setTimeout(() => {
-        updateUserData({ interests });
+        updateUserMutation.mutate({ interests });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [interests, userData, updateUserData]);
+  }, [interests, userData, updateUserMutation]);
 
   useEffect(() => {
     if (userData && displayName !== userData.displayName) {
       const timer = setTimeout(() => {
-        updateUserData({ displayName });
+        updateUserMutation.mutate({ displayName });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [displayName, userData, updateUserData]);
+  }, [displayName, userData, updateUserMutation]);
 
   useEffect(() => {
     if (userData && bio !== userData.bio) {
       const timer = setTimeout(() => {
-        updateUserData({ bio });
+        updateUserMutation.mutate({ bio });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [bio, userData, updateUserData]);
+  }, [bio, userData, updateUserMutation]);
 
   const handleSaveChanges = async () => {
     try {
-      await updateUserData({
+      await updateUserMutation.mutateAsync({
         displayName,
         bio,
         communicationStyle,
@@ -117,9 +140,26 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
       Alert.alert('Success', 'Profile updated successfully!');
       setEditingProfile(false);
     } catch (error) {
+      console.error('Profile update error:', error);
       Alert.alert('Error', 'Failed to update profile');
     }
   };
+
+  // Show loading state if no user data is available yet
+  if (!userData) {
+    return (
+      <Modal visible={true} animationType="slide" presentationStyle="pageSheet">
+        <View style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Text style={{ color: colors.text, fontSize: 16 }}>Loading profile...</Text>
+        </View>
+      </Modal>
+    );
+  }
 
   const handleAddInterest = () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
@@ -210,6 +250,68 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
       </View>
 
       <ScrollView style={{ flex: 1, padding: 20 }}>
+        {/* Display Name */}
+        <View style={{ marginBottom: 30 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '600',
+              color: colors.text,
+              marginBottom: 12,
+            }}
+          >
+            Display Name
+          </Text>
+          <TextInput
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: 8,
+              padding: 16,
+              color: colors.text,
+              fontSize: 16,
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}
+            value={displayName}
+            onChangeText={setDisplayName}
+            placeholder="Enter your display name"
+            placeholderTextColor={colors.text + '80'}
+          />
+        </View>
+
+        {/* Bio */}
+        <View style={{ marginBottom: 30 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '600',
+              color: colors.text,
+              marginBottom: 12,
+            }}
+          >
+            Bio
+          </Text>
+          <TextInput
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: 8,
+              padding: 16,
+              color: colors.text,
+              fontSize: 16,
+              borderWidth: 1,
+              borderColor: colors.border,
+              minHeight: 80,
+              textAlignVertical: 'top',
+            }}
+            value={bio}
+            onChangeText={setBio}
+            placeholder="Tell us about yourself..."
+            placeholderTextColor={colors.text + '80'}
+            multiline
+            numberOfLines={3}
+          />
+        </View>
+
         {/* Communication Style */}
         <View style={{ marginBottom: 30 }}>
           <Text

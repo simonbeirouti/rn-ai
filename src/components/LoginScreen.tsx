@@ -9,8 +9,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
-import { useUser } from '../contexts/UserContext';
+import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 import { useTheme } from '../hooks/useTheme';
 
 export function LoginScreen() {
@@ -18,8 +18,8 @@ export function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, signInAnonymous } = useAuth();
-  const { setInitiatingAccess } = useUser();
+  const { signIn, signUp, signInAnonymous } = useAuthStore();
+  const { setInitiatingAccess } = useUserStore();
   const { colors } = useTheme();
 
   const handleEmailAuth = async () => {
@@ -32,11 +32,11 @@ export function LoginScreen() {
     try {
       if (isSignUp) {
         await signUp(email, password);
-        // Show loading screen immediately after successful sign up
+        // Show "Loading AI experience" loading screen after successful sign up
         setLoading(false);
         setInitiatingAccess(true);
         
-        // Hide loading screen after 2.5 seconds
+        // Hide loading screen after 2.5 seconds to show onboarding
         setTimeout(() => {
           setInitiatingAccess(false);
         }, 2500);
