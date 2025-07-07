@@ -208,6 +208,8 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
                   borderRadius: 8,
                   padding: 12,
                   alignItems: 'center',
+                  borderWidth: communicationStyle === style ? 0 : 1,
+                  borderColor: colors.border,
                 }}
                 onPress={() => setCommunicationStyle(style)}
               >

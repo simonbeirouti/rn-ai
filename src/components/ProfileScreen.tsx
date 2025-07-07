@@ -332,11 +332,11 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
                 alignItems: 'center',
                 paddingVertical: 12,
                 paddingHorizontal: 16,
-                backgroundColor: colors.card,
+                backgroundColor: communicationStyle === option.value ? colors.primary : colors.card,
                 borderRadius: 8,
                 marginBottom: 8,
-                borderWidth: communicationStyle === option.value ? 2 : 0,
-                borderColor: colors.primary,
+                borderWidth: communicationStyle === option.value ? 0 : 1,
+                borderColor: colors.border,
               }}
               onPress={() => setCommunicationStyle(option.value as 'descriptive' | 'concise' | 'funny')}
             >
@@ -346,15 +346,18 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
                   height: 20,
                   borderRadius: 10,
                   borderWidth: 2,
-                  borderColor: colors.primary,
+                  borderColor: communicationStyle === option.value ? 'white' : colors.border,
                   marginRight: 12,
                   backgroundColor:
                     communicationStyle === option.value
-                      ? colors.primary
+                      ? 'white'
                       : 'transparent',
                 }}
               />
-              <Text style={{ color: colors.text, fontSize: 16 }}>
+              <Text style={{ 
+                color: communicationStyle === option.value ? 'white' : colors.text, 
+                fontSize: 16 
+              }}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -413,6 +416,8 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
                     borderRadius: 8,
                     marginBottom: 8,
                     overflow: 'hidden',
+                    borderWidth: 1,
+                    borderColor: colors.border,
                   }}
                 >
                   <TouchableOpacity
@@ -500,6 +505,8 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
                     borderRadius: 8,
                     marginBottom: 8,
                     overflow: 'hidden',
+                    borderWidth: 1,
+                    borderColor: colors.border,
                   }}
                 >
                   <TouchableOpacity

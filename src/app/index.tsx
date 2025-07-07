@@ -11,6 +11,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
 import { useCompleteOnboarding } from "@/queries/userQueries";
 import { useTheme } from "@/hooks/useTheme";
+import { Files } from "@/components/files";
 
 export default function Page() {
   const { user, loading: authLoading } = useAuthStore();

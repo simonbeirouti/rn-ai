@@ -21,6 +21,10 @@ export function useTheme() {
       tabBackground: isDark ? '#1a1a1a' : '#f8f9fa',
       tabActiveBackground: isDark ? '#374151' : '#e5e7eb',
       tabInactiveText: isDark ? '#9ca3af' : '#6b7280',
+      // Choice element colors for consistent styling
+      card: isDark ? '#1f1f1f' : '#f8f9fa',
+      border: isDark ? '#374151' : '#e5e7eb',
+      cardHover: isDark ? '#374151' : '#e5e7eb',
     }
   };
 }
