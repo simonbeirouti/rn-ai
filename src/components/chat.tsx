@@ -6,12 +6,14 @@ import { ScrollView, Text, TextInput, View } from "react-native";
 import { KeyboardPaddingView } from "@/components/keyboard-padding";
 import { CelsiusConvertCard, WeatherCard } from "@/components/tool-cards";
 import { UserMessage } from "@/components/user-message";
+import { useTheme } from "@/hooks/useTheme";
 
 export function Chat() {
   const { messages, error, handleInputChange, input, handleSubmit } = useChat({
     // https://ai-sdk.dev/docs/getting-started/expo#enabling-multi-step-tool-calls
     maxSteps: 5,
   });
+  const theme = useTheme();
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -36,7 +38,8 @@ export function Chat() {
         automaticallyAdjustContentInsets
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="gap-4 p-4 pb-8"
-        className="flex-1 bg-white/50"
+        className="flex-1"
+        style={{ backgroundColor: theme.colors.chatBackground }}
       >
         {messages.map((m) => (
           <Message key={m.id} message={m} />
@@ -51,21 +54,30 @@ export function Chat() {
         style={{
           [process.env.EXPO_OS === "web"
             ? `backgroundImage`
-            : `experimental_backgroundImage`]: `linear-gradient(to bottom, #F2F2F200, #F2F2F2)`,
+            : `experimental_backgroundImage`]: theme.isDark 
+              ? `linear-gradient(to bottom, #00000000, #000000)`
+              : `linear-gradient(to bottom, #F2F2F200, #F2F2F2)`,
         }}
       >
         <View
-          className="bg-white web:drop-shadow-xl overflow-visible rounded-xl m-3"
+          className="web:drop-shadow-xl overflow-visible rounded-xl m-3"
           style={{
-            boxShadow: "0px 5px 13px rgba(0, 0, 0, 0.1)",
+            backgroundColor: theme.colors.card,
+            boxShadow: theme.isDark 
+              ? "0px 5px 13px rgba(255, 255, 255, 0.1)"
+              : "0px 5px 13px rgba(0, 0, 0, 0.1)",
           }}
         >
           <TextInput
             className="p-4 outline-none"
-            style={{ fontSize: 16 }}
+            style={{ 
+              fontSize: 16,
+              backgroundColor: theme.colors.card,
+              color: theme.colors.text
+            }}
             placeholder="Ask about the weather..."
             value={input}
-            placeholderTextColor={"#A0AEC0"}
+            placeholderTextColor={theme.colors.tabInactiveText}
             onChange={(e) =>
               handleInputChange({
                 ...e,
