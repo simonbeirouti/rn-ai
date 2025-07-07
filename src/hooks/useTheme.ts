@@ -1,21 +1,31 @@
-import { useTheme as useNavigationTheme } from '@react-navigation/native';
-import { useColorScheme } from './useColorScheme';
+import { useThemeStore } from '../stores/themeStore';
+import { useEffect } from 'react';
 
 export function useTheme() {
-  const navigationTheme = useNavigationTheme();
-  const colorScheme = useColorScheme();
+  const { currentTheme } = useThemeStore();
+  const isDark = currentTheme === 'dark';
+  
+  // Apply dark class to document root for CSS variables
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      if (isDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    }
+  }, [isDark]);
   
   return {
-    ...navigationTheme,
-    isDark: colorScheme === 'dark',
-    colors: {
-      ...navigationTheme.colors,
-      // Custom colors for chat app
-      chatBackground: colorScheme === 'dark' ? '#000000' : '#ffffff',
-      messageBackground: colorScheme === 'dark' ? '#1f1f1f' : '#f5f5f5',
-      tabBackground: colorScheme === 'dark' ? '#1a1a1a' : '#f8f9fa',
-      tabActiveBackground: colorScheme === 'dark' ? '#374151' : '#e5e7eb',
-      tabInactiveText: colorScheme === 'dark' ? '#9ca3af' : '#6b7280',
-    }
+    isDark,
+    currentTheme,
+    // Helper function to get theme-aware class names
+    getThemeClass: (lightClass: string, darkClass?: string) => {
+      if (darkClass) {
+        return isDark ? darkClass : lightClass;
+      }
+      return lightClass;
+    },
   };
 }
