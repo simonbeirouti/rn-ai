@@ -10,11 +10,9 @@ import { useTheme } from "@/hooks/useTheme";
 
 export function Chat() {
   const { messages, error, handleInputChange, input, handleSubmit } = useChat({
-    // https://ai-sdk.dev/docs/getting-started/expo#enabling-multi-step-tool-calls
     maxSteps: 5,
   });
-  const theme = useTheme();
-
+  const { isDark } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -24,7 +22,7 @@ export function Chat() {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center p-4">
-        <Text className="text-red-500 text-center">{error.message}</Text>
+        <Text className="text-destructive text-center">{error.message}</Text>
       </View>
     );
   }
@@ -38,46 +36,32 @@ export function Chat() {
         automaticallyAdjustContentInsets
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="gap-4 p-4 pb-8"
-        className="flex-1"
-        style={{ backgroundColor: theme.colors.chatBackground }}
+        className="flex-1 bg-chat-background"
       >
         {messages.map((m) => (
           <Message key={m.id} message={m} />
         ))}
-
-        {/* Spacer so last message is visible above the input */}
         <KeyboardPaddingView />
       </ScrollView>
 
       <View
-        className="position absolute bottom-0 left-0 right-0"
+        className="absolute bottom-0 left-0 right-0"
         style={{
           [process.env.EXPO_OS === "web"
             ? `backgroundImage`
-            : `experimental_backgroundImage`]: theme.isDark 
-              ? `linear-gradient(to bottom, #00000000, #000000)`
-              : `linear-gradient(to bottom, #F2F2F200, #F2F2F2)`,
+            : `experimental_backgroundImage`]: isDark
+            ? `linear-gradient(to bottom, #00000000, #000000)`
+            : `linear-gradient(to bottom, #FFFFFF00, #FFFFFF)`,
         }}
       >
         <View
-          className="web:drop-shadow-xl overflow-visible rounded-xl m-3"
-          style={{
-            backgroundColor: theme.colors.card,
-            boxShadow: theme.isDark 
-              ? "0px 5px 13px rgba(255, 255, 255, 0.1)"
-              : "0px 5px 13px rgba(0, 0, 0, 0.1)",
-          }}
+          className="web:drop-shadow-xl overflow-visible rounded-xl m-3 bg-card shadow-lg"
         >
           <TextInput
-            className="p-4 outline-none"
-            style={{ 
-              fontSize: 16,
-              backgroundColor: theme.colors.card,
-              color: theme.colors.text
-            }}
+            className="p-4 text-base text-foreground outline-none"
             placeholder="Ask about the weather..."
             value={input}
-            placeholderTextColor={theme.colors.tabInactiveText}
+            placeholderTextColor="rgb(var(--muted-foreground))"
             onChange={(e) =>
               handleInputChange({
                 ...e,
@@ -111,7 +95,7 @@ function Message({ message }: { message: UIMessage }) {
           if (isUser) {
             return <UserMessage part={part} />;
           }
-          return <Text className="text-lg">{part.text}</Text>;
+          return <Text className="text-lg text-foreground">{part.text}</Text>;
         }
         case "step-start":
           return null;

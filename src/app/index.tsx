@@ -11,27 +11,19 @@ import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
 import { useCompleteOnboarding } from "@/queries/userQueries";
 import { useTheme } from "@/hooks/useTheme";
-import { Files } from "@/components/files";
 
 export default function Page() {
   const { user, loading: authLoading } = useAuthStore();
   const { userData, loading: userLoading, hasCompletedOnboarding, initiatingAccess, addingProfileInfo } = useUserStore();
   const completeOnboardingMutation = useCompleteOnboarding();
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
   const [showProfile, setShowProfile] = useState(false);
 
   // Show loading screen while checking authentication
   if (authLoading || (user && userLoading)) {
     return (
-      <View 
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: colors.background,
-        }}
-      >
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View className="flex-1 justify-center items-center bg-background">
+        <ActivityIndicator size="large" color={isDark ? '#FFFFFF' : '#000000'} />
       </View>
     );
   }
@@ -86,7 +78,7 @@ export default function Page() {
       id: 'channels',
       title: 'Channels',
       component: <Channels />
-    }
+    },
   ];
 
   return (

@@ -12,12 +12,12 @@ interface LoadingScreenProps {
   duration?: number; // Duration in milliseconds
 }
 
-export function LoadingScreen({ 
-  message = "Loading...", 
+export function LoadingScreen({
+  message = "Loading...",
   onComplete,
-  duration = 2000 
+  duration = 2000
 }: LoadingScreenProps) {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -43,42 +43,16 @@ export function LoadingScreen({
   }, [onComplete, duration]);
 
   return (
-    <View 
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.background,
-        paddingHorizontal: 40,
-      }}
-    >
-      <ActivityIndicator 
-        size="large" 
-        color={colors.primary} 
-        style={{ marginBottom: 24 }}
+    <View className="flex-1 justify-center items-center bg-background px-10">
+      <ActivityIndicator
+        size="large"
+        color="rgb(var(--primary))"
+        className="mb-6"
       />
-      
-      <Text
-        style={{
-          color: colors.text,
-          fontSize: 18,
-          fontWeight: '500',
-          textAlign: 'center',
-          marginBottom: 8,
-        }}
-      >
+      <Text className="text-foreground text-lg font-medium text-center mb-2">
         {message}
       </Text>
-      
-      <Text
-        style={{
-          color: colors.text,
-          fontSize: 18,
-          fontWeight: '500',
-          opacity: 0.6,
-          minHeight: 24,
-        }}
-      >
+      <Text className="text-foreground text-lg font-medium opacity-60 min-h-[24px]">
         {dots}
       </Text>
     </View>

@@ -8,7 +8,6 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../stores/authStore';
 import { useUserStore } from '../stores/userStore';
 import { useUpdateUserData } from '../queries/userQueries';
@@ -25,7 +24,6 @@ interface ProfileScreenProps {
 }
 
 export function ProfileScreen({ onClose }: ProfileScreenProps) {
-  const { colors } = useTheme();
   const { logout } = useAuthStore();
   const { userData } = useUserStore();
   const updateUserMutation = useUpdateUserData();
@@ -149,13 +147,8 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
   if (!userData) {
     return (
       <Modal visible={true} animationType="slide" presentationStyle="pageSheet">
-        <View style={{
-          flex: 1,
-          backgroundColor: colors.background,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <Text style={{ color: colors.text, fontSize: 16 }}>Loading profile...</Text>
+        <View className="flex-1 bg-background justify-center items-center">
+          <Text className="text-foreground text-base">Loading profile...</Text>
         </View>
       </Modal>
     );
@@ -230,134 +223,79 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background">
       {/* Header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 20,
-        }}
-      >
+      <View className="flex-row items-center justify-between p-5">
         <TouchableOpacity onPress={onClose}>
-          <Text style={{ color: colors.primary, fontSize: 16 }}>Close</Text>
+          <Text className="text-primary text-base">Close</Text>
         </TouchableOpacity>
-        <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600' }}>
+        <Text className="text-foreground text-lg font-semibold">
           Profile Settings
         </Text>
-        <View style={{ width: 40 }} />
+        <View className="w-10" />
       </View>
 
-      <ScrollView style={{ flex: 1, padding: 20 }}>
+      <ScrollView className="flex-1 p-5">
         {/* Display Name */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 12,
-            }}
-          >
+        <View className="mb-8">
+          <Text className="text-lg font-semibold text-foreground mb-3">
             Display Name
           </Text>
           <TextInput
-            style={{
-              backgroundColor: colors.card,
-              borderRadius: 8,
-              padding: 16,
-              color: colors.text,
-              fontSize: 16,
-              borderWidth: 1,
-              borderColor: colors.border,
-            }}
+            className="bg-card rounded-lg p-4 text-foreground text-base border border-border"
             value={displayName}
             onChangeText={setDisplayName}
             placeholder="Enter your display name"
-            placeholderTextColor={colors.text + '80'}
+            placeholderTextColor="rgb(var(--muted-foreground))"
           />
         </View>
 
         {/* Bio */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 12,
-            }}
-          >
+        <View className="mb-8">
+          <Text className="text-lg font-semibold text-foreground mb-3">
             Bio
           </Text>
           <TextInput
-            style={{
-              backgroundColor: colors.card,
-              borderRadius: 8,
-              padding: 16,
-              color: colors.text,
-              fontSize: 16,
-              borderWidth: 1,
-              borderColor: colors.border,
-              minHeight: 80,
-              textAlignVertical: 'top',
-            }}
+            className="bg-card rounded-lg p-4 text-foreground text-base border border-border min-h-[80px]"
+            style={{ textAlignVertical: 'top' }}
             value={bio}
             onChangeText={setBio}
             placeholder="Tell us about yourself..."
-            placeholderTextColor={colors.text + '80'}
+            placeholderTextColor="rgb(var(--muted-foreground))"
             multiline
             numberOfLines={3}
           />
         </View>
 
         {/* Communication Style */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 12,
-            }}
-          >
+        <View className="mb-8">
+          <Text className="text-lg font-semibold text-foreground mb-3">
             Communication Style
           </Text>
           {communicationOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                backgroundColor: communicationStyle === option.value ? colors.primary : colors.card,
-                borderRadius: 8,
-                marginBottom: 8,
-                borderWidth: communicationStyle === option.value ? 0 : 1,
-                borderColor: colors.border,
-              }}
+              className={`flex-row items-center py-3 px-4 rounded-lg mb-2 border ${
+                communicationStyle === option.value
+                  ? 'bg-primary border-transparent'
+                  : 'bg-card border-border'
+              }`}
               onPress={() => setCommunicationStyle(option.value as 'descriptive' | 'concise' | 'funny')}
             >
               <View
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 10,
-                  borderWidth: 2,
-                  borderColor: communicationStyle === option.value ? 'white' : colors.border,
-                  marginRight: 12,
-                  backgroundColor:
-                    communicationStyle === option.value
-                      ? 'white'
-                      : 'transparent',
-                }}
+                className={`w-5 h-5 rounded-full border-2 mr-3 ${
+                  communicationStyle === option.value
+                    ? 'border-primary-foreground bg-primary-foreground'
+                    : 'border-border'
+                }`}
               />
-              <Text style={{ 
-                color: communicationStyle === option.value ? 'white' : colors.text, 
-                fontSize: 16 
-              }}>
+              <Text
+                className={`text-base ${
+                  communicationStyle === option.value
+                    ? 'text-primary-foreground'
+                    : 'text-foreground'
+                }`}
+              >
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -365,118 +303,58 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
         </View>
 
         {/* Goals Section */}
-        <View style={{ marginBottom: 30 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 12,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '600',
-                color: colors.text,
-              }}
-            >
+        <View className="mb-8">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text className="text-lg font-semibold text-foreground">
               Goals
             </Text>
             <TouchableOpacity
-              style={{
-                backgroundColor: colors.primary,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 6,
-              }}
+              className="bg-primary py-1.5 px-3 rounded-md"
               onPress={() => setShowGoalModal(true)}
             >
-              <Text style={{ color: 'white', fontSize: 14 }}>+ Add Goal</Text>
+              <Text className="text-primary-foreground text-sm">+ Add Goal</Text>
             </TouchableOpacity>
           </View>
 
           {/* Personal Goals */}
           {goals.personal.length > 0 && (
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: colors.text,
-                marginBottom: 8,
-                opacity: 0.8,
-              }}>
+            <View className="mb-4">
+              <Text className="text-base font-semibold text-foreground mb-2 opacity-80">
                 Personal Goals
               </Text>
               {goals.personal.map((goal) => (
                 <View
                   key={goal.id}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderRadius: 8,
-                    marginBottom: 8,
-                    overflow: 'hidden',
-                    borderWidth: 1,
-                    borderColor: colors.border,
-                  }}
+                  className="bg-card rounded-lg mb-2 overflow-hidden border border-border"
                 >
                   <TouchableOpacity
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: 16,
-                    }}
+                    className="flex-row justify-between items-center p-4"
                     onPress={() => toggleGoalExpansion(goal.id)}
                   >
                     <Text
-                      style={{
-                        color: colors.text,
-                        fontSize: 16,
-                        fontWeight: '500',
-                        flex: 1,
-                        textDecorationLine: goal.completed ? 'line-through' : 'none',
-                        opacity: goal.completed ? 0.6 : 1,
-                      }}
+                      className={`text-foreground text-base font-medium flex-1 ${
+                        goal.completed ? 'line-through opacity-60' : ''
+                      }`}
                     >
                       {goal.title}
                     </Text>
-                    <Text style={{ color: colors.text, opacity: 0.6 }}>
+                    <Text className="text-foreground opacity-60">
                       {expandedGoals.has(goal.id) ? '−' : '+'}
                     </Text>
                   </TouchableOpacity>
 
                   {expandedGoals.has(goal.id) && (
-                    <View
-                      style={{
-                        padding: 16,
-                        paddingTop: 0,
-                        borderTopWidth: 1,
-                        borderTopColor: colors.border,
-                      }}
-                    >
+                    <View className="p-4 pt-0 border-t border-border">
                       {goal.description ? (
-                        <Text
-                          style={{
-                            color: colors.text,
-                            opacity: 0.8,
-                            marginBottom: 12,
-                          }}
-                        >
+                        <Text className="text-foreground opacity-80 mb-3">
                           {goal.description}
                         </Text>
                       ) : null}
                       <TouchableOpacity
-                        style={{
-                          backgroundColor: '#ff4444',
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
-                          borderRadius: 6,
-                          alignSelf: 'flex-start',
-                        }}
+                        className="bg-destructive py-1.5 px-3 rounded-md self-start"
                         onPress={() => handleDeleteGoal(goal.id, 'personal')}
                       >
-                        <Text style={{ color: 'white', fontSize: 12 }}>Delete</Text>
+                        <Text className="text-destructive-foreground text-xs">Delete</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -487,85 +365,43 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
 
           {/* Professional Goals */}
           {goals.professional.length > 0 && (
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: colors.text,
-                marginBottom: 8,
-                opacity: 0.8,
-              }}>
+            <View className="mb-4">
+              <Text className="text-base font-semibold text-foreground mb-2 opacity-80">
                 Professional Goals
               </Text>
               {goals.professional.map((goal) => (
                 <View
                   key={goal.id}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderRadius: 8,
-                    marginBottom: 8,
-                    overflow: 'hidden',
-                    borderWidth: 1,
-                    borderColor: colors.border,
-                  }}
+                  className="bg-card rounded-lg mb-2 overflow-hidden border border-border"
                 >
                   <TouchableOpacity
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: 16,
-                    }}
+                    className="flex-row justify-between items-center p-4"
                     onPress={() => toggleGoalExpansion(goal.id)}
                   >
                     <Text
-                      style={{
-                        color: colors.text,
-                        fontSize: 16,
-                        fontWeight: '500',
-                        flex: 1,
-                        textDecorationLine: goal.completed ? 'line-through' : 'none',
-                        opacity: goal.completed ? 0.6 : 1,
-                      }}
+                      className={`text-foreground text-base font-medium flex-1 ${
+                        goal.completed ? 'line-through opacity-60' : ''
+                      }`}
                     >
                       {goal.title}
                     </Text>
-                    <Text style={{ color: colors.text, opacity: 0.6 }}>
+                    <Text className="text-foreground opacity-60">
                       {expandedGoals.has(goal.id) ? '−' : '+'}
                     </Text>
                   </TouchableOpacity>
 
                   {expandedGoals.has(goal.id) && (
-                    <View
-                      style={{
-                        padding: 16,
-                        paddingTop: 0,
-                        borderTopWidth: 1,
-                        borderTopColor: colors.border,
-                      }}
-                    >
+                    <View className="p-4 pt-0 border-t border-border">
                       {goal.description ? (
-                        <Text
-                          style={{
-                            color: colors.text,
-                            opacity: 0.8,
-                            marginBottom: 12,
-                          }}
-                        >
+                        <Text className="text-foreground opacity-80 mb-3">
                           {goal.description}
                         </Text>
                       ) : null}
                       <TouchableOpacity
-                        style={{
-                          backgroundColor: '#ff4444',
-                          paddingHorizontal: 12,
-                          paddingVertical: 6,
-                          borderRadius: 6,
-                          alignSelf: 'flex-start',
-                        }}
+                        className="bg-destructive py-1.5 px-3 rounded-md self-start"
                         onPress={() => handleDeleteGoal(goal.id, 'professional')}
                       >
-                        <Text style={{ color: 'white', fontSize: 12 }}>Delete</Text>
+                        <Text className="text-destructive-foreground text-xs">Delete</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -576,75 +412,30 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
         </View>
 
         {/* Interests Section */}
-        <View style={{ marginBottom: 30 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 12,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '600',
-                color: colors.text,
-              }}
-            >
+        <View className="mb-8">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text className="text-lg font-semibold text-foreground">
               Interests
             </Text>
             <TouchableOpacity
-              style={{
-                backgroundColor: colors.primary,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 6,
-              }}
+              className="bg-primary py-1.5 px-3 rounded-md"
               onPress={() => setShowInterestModal(true)}
             >
-              <Text style={{ color: 'white', fontSize: 14 }}>+ Add</Text>
+              <Text className="text-primary-foreground text-sm">+ Add</Text>
             </TouchableOpacity>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 8,
-            }}
-          >
+          <View className="flex-row flex-wrap gap-2">
             {interests.map((interest, index) => (
               <TouchableOpacity
                 key={index}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: colors.card,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                }}
+                className="flex-row items-center bg-card py-2 px-3 rounded-full border border-border"
                 onPress={() => handleRemoveInterest(interest)}
               >
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 14,
-                    marginRight: 6,
-                  }}
-                >
+                <Text className="text-foreground text-sm mr-1.5">
                   {interest}
                 </Text>
-                <Text
-                  style={{
-                    color: colors.text,
-                    opacity: 0.6,
-                    fontSize: 16,
-                  }}
-                >
+                <Text className="text-foreground opacity-60 text-base">
                   ×
                 </Text>
               </TouchableOpacity>
@@ -654,22 +445,10 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
 
         {/* Logout Button */}
         <TouchableOpacity
-          style={{
-            backgroundColor: '#ff4444',
-            borderRadius: 12,
-            padding: 16,
-            alignItems: 'center',
-            marginBottom: 40,
-          }}
+          className="bg-destructive rounded-xl p-4 items-center mb-10"
           onPress={handleLogout}
         >
-          <Text
-            style={{
-              color: 'white',
-              fontSize: 16,
-              fontWeight: '600',
-            }}
-          >
+          <Text className="text-destructive-foreground text-base font-semibold">
             Logout
           </Text>
         </TouchableOpacity>
@@ -682,74 +461,31 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
         animationType="slide"
         onRequestClose={() => setShowInterestModal(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 20,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: colors.background,
-              borderRadius: 12,
-              padding: 20,
-              width: '100%',
-              maxWidth: 300,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '600',
-                color: colors.text,
-                marginBottom: 16,
-                textAlign: 'center',
-              }}
-            >
+        <View className="flex-1 bg-black/50 justify-center items-center p-5">
+          <View className="bg-background rounded-xl p-5 w-full max-w-[300px]">
+            <Text className="text-lg font-semibold text-foreground mb-4 text-center">
               Add Interest
             </Text>
             <TextInput
-              style={{
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 16,
-                marginBottom: 16,
-              }}
+              className="bg-card rounded-lg p-3 text-foreground text-base mb-4"
               placeholder="Enter interest..."
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={newInterest}
               onChangeText={setNewInterest}
               autoFocus
             />
-            <View style={{ flexDirection: 'row', gap: 12 }}>
+            <View className="flex-row gap-3">
               <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.card,
-                  borderRadius: 8,
-                  padding: 12,
-                  alignItems: 'center',
-                }}
+                className="flex-1 bg-card rounded-lg p-3 items-center"
                 onPress={() => setShowInterestModal(false)}
               >
-                <Text style={{ color: colors.text }}>Cancel</Text>
+                <Text className="text-foreground">Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.primary,
-                  borderRadius: 8,
-                  padding: 12,
-                  alignItems: 'center',
-                }}
+                className="flex-1 bg-primary rounded-lg p-3 items-center"
                 onPress={handleAddInterest}
               >
-                <Text style={{ color: 'white' }}>Add</Text>
+                <Text className="text-primary-foreground">Add</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -763,65 +499,45 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
         animationType="slide"
         onRequestClose={() => setShowGoalModal(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 20,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: colors.background,
-              borderRadius: 12,
-              padding: 20,
-              width: '100%',
-              maxWidth: 350,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '600',
-                color: colors.text,
-                marginBottom: 16,
-                textAlign: 'center',
-              }}
-            >
+        <View className="flex-1 bg-black/50 justify-center items-center p-5">
+          <View className="bg-background rounded-xl p-5 w-full max-w-[350px]">
+            <Text className="text-lg font-semibold text-foreground mb-4 text-center">
               Add Goal
             </Text>
             
             {/* Category Selection */}
-            <View style={{ marginBottom: 16 }}>
-              <Text style={{ color: colors.text, marginBottom: 8, fontSize: 16 }}>Category</Text>
-              <View style={{ flexDirection: 'row', gap: 12 }}>
+            <View className="mb-4">
+              <Text className="text-foreground mb-2 text-base">Category</Text>
+              <View className="flex-row gap-3">
                 <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: newGoal.category === 'personal' ? colors.primary : colors.card,
-                    borderRadius: 8,
-                    padding: 12,
-                    alignItems: 'center',
-                  }}
+                  className={`flex-1 rounded-lg p-3 items-center ${
+                    newGoal.category === 'personal' ? 'bg-primary' : 'bg-card'
+                  }`}
                   onPress={() => setNewGoal({ ...newGoal, category: 'personal' })}
                 >
-                  <Text style={{ color: newGoal.category === 'personal' ? 'white' : colors.text }}>
+                  <Text
+                    className={
+                      newGoal.category === 'personal'
+                        ? 'text-primary-foreground'
+                        : 'text-foreground'
+                    }
+                  >
                     Personal
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: newGoal.category === 'professional' ? colors.primary : colors.card,
-                    borderRadius: 8,
-                    padding: 12,
-                    alignItems: 'center',
-                  }}
+                  className={`flex-1 rounded-lg p-3 items-center ${
+                    newGoal.category === 'professional' ? 'bg-primary' : 'bg-card'
+                  }`}
                   onPress={() => setNewGoal({ ...newGoal, category: 'professional' })}
                 >
-                  <Text style={{ color: newGoal.category === 'professional' ? 'white' : colors.text }}>
+                  <Text
+                    className={
+                      newGoal.category === 'professional'
+                        ? 'text-primary-foreground'
+                        : 'text-foreground'
+                    }
+                  >
                     Professional
                   </Text>
                 </TouchableOpacity>
@@ -829,62 +545,35 @@ export function ProfileScreen({ onClose }: ProfileScreenProps) {
             </View>
 
             <TextInput
-              style={{
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 16,
-                marginBottom: 12,
-              }}
+              className="bg-card rounded-lg p-3 text-foreground text-base mb-3"
               placeholder="Goal title..."
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={newGoal.title}
               onChangeText={(text) => setNewGoal({ ...newGoal, title: text })}
             />
             <TextInput
-              style={{
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 16,
-                marginBottom: 16,
-                minHeight: 80,
-                textAlignVertical: 'top',
-              }}
+              className="bg-card rounded-lg p-3 text-foreground text-base mb-4 min-h-[80px]"
+              style={{ textAlignVertical: 'top' }}
               placeholder="Goal description (optional)..."
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={newGoal.description}
               onChangeText={(text) =>
                 setNewGoal({ ...newGoal, description: text })
               }
               multiline
             />
-            <View style={{ flexDirection: 'row', gap: 12 }}>
+            <View className="flex-row gap-3">
               <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.card,
-                  borderRadius: 8,
-                  padding: 12,
-                  alignItems: 'center',
-                }}
+                className="flex-1 bg-card rounded-lg p-3 items-center"
                 onPress={() => setShowGoalModal(false)}
               >
-                <Text style={{ color: colors.text }}>Cancel</Text>
+                <Text className="text-foreground">Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.primary,
-                  borderRadius: 8,
-                  padding: 12,
-                  alignItems: 'center',
-                }}
+                className="flex-1 bg-primary rounded-lg p-3 items-center"
                 onPress={handleAddGoal}
               >
-                <Text style={{ color: 'white' }}>Add Goal</Text>
+                <Text className="text-primary-foreground">Add Goal</Text>
               </TouchableOpacity>
             </View>
           </View>

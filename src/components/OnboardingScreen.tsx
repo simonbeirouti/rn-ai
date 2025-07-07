@@ -7,7 +7,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import { useTheme } from '../hooks/useTheme';
+// import { useTheme } from '../hooks/useTheme';
 
 interface OnboardingScreenProps {
   onComplete: (userData: UserData) => void;
@@ -41,7 +41,7 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const [personalGoalDescription, setPersonalGoalDescription] = useState('');
   const [professionalGoal, setProfessionalGoal] = useState('');
   const [professionalGoalDescription, setProfessionalGoalDescription] = useState('');
-  const { colors } = useTheme();
+  // const { colors } = useTheme();
 
   const addInterest = () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
@@ -87,30 +87,12 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: 20, paddingTop: 60 }}
-    >
-      <View style={{ alignItems: 'center', marginBottom: 40 }}>
-        <Text
-          style={{
-            fontSize: 32,
-            fontWeight: 'bold',
-            color: colors.text,
-            marginBottom: 8,
-          }}
-        >
+    <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 20, paddingTop: 60 }}>
+      <View className="items-center mb-10">
+        <Text className="text-3xl font-bold text-foreground mb-2">
           Welcome! 👋
         </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            color: colors.text,
-            opacity: 0.7,
-            textAlign: 'center',
-            lineHeight: 22,
-          }}
-        >
+        <Text className="text-base text-muted-foreground text-center leading-6">
           Let's set up your profile to get started
         </Text>
       </View>
@@ -118,26 +100,13 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
       <View style={{ gap: 24 }}>
         {/* Display Name */}
         <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 8,
-            }}
-          >
+          <Text className="text-base font-semibold text-foreground mb-2">
             Display Name *
           </Text>
           <TextInput
-            style={{
-              backgroundColor: colors.card,
-              borderRadius: 12,
-              padding: 16,
-              color: colors.text,
-              fontSize: 16,
-            }}
+            className="bg-card rounded-xl p-4 text-foreground text-base border border-border"
             placeholder="How should we call you?"
-            placeholderTextColor={colors.text + '80'}
+            placeholderTextColor="rgb(var(--muted-foreground))"
             value={displayName}
             onChangeText={setDisplayName}
             maxLength={50}
@@ -146,80 +115,42 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
         {/* Bio */}
         <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 8,
-            }}
-          >
+          <Text className="text-base font-semibold text-foreground mb-2">
             Bio
           </Text>
           <TextInput
-            style={{
-              backgroundColor: colors.card,
-              borderRadius: 12,
-              padding: 16,
-              color: colors.text,
-              fontSize: 16,
-              minHeight: 100,
-              textAlignVertical: 'top',
-            }}
+            className="bg-card rounded-xl p-4 text-foreground text-base border border-border min-h-[100px]"
+            style={{ textAlignVertical: 'top' }}
             placeholder="Tell us a bit about yourself..."
-            placeholderTextColor={colors.text + '80'}
+            placeholderTextColor="rgb(var(--muted-foreground))"
             value={bio}
             onChangeText={setBio}
             multiline
             maxLength={200}
           />
-          <Text
-            style={{
-              fontSize: 12,
-              color: colors.text,
-              opacity: 0.6,
-              textAlign: 'right',
-              marginTop: 4,
-            }}
-          >
+          <Text className="text-xs text-muted-foreground text-right mt-1">
             {bio.length}/200
           </Text>
         </View>
 
         {/* Communication Style */}
         <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 8,
-            }}
-          >
+          <Text className="text-base font-semibold text-foreground mb-2">
             Communication Style
           </Text>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View className="flex-row gap-2">
             {(['descriptive', 'concise', 'funny'] as const).map((style) => (
               <TouchableOpacity
                 key={style}
-                style={{
-                  flex: 1,
-                  backgroundColor: communicationStyle === style ? colors.primary : colors.card,
-                  borderRadius: 8,
-                  padding: 12,
-                  alignItems: 'center',
-                  borderWidth: communicationStyle === style ? 0 : 1,
-                  borderColor: colors.border,
-                }}
+                className={`flex-1 rounded-lg p-3 items-center border ${communicationStyle === style
+                    ? 'bg-primary border-transparent'
+                    : 'bg-card border-border'
+                  }`}
                 onPress={() => setCommunicationStyle(style)}
               >
                 <Text
-                  style={{
-                    color: communicationStyle === style ? 'white' : colors.text,
-                    fontSize: 14,
-                    fontWeight: '500',
-                    textTransform: 'capitalize',
-                  }}
+                  className={`text-sm font-medium capitalize ${communicationStyle === style ? 'text-primary-foreground' : 'text-foreground'
+                    }`}
                 >
                   {style}
                 </Text>
@@ -230,58 +161,29 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
         {/* Goals */}
         <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 8,
-            }}
-          >
+          <Text className="text-base font-semibold text-foreground mb-2">
             Goals (Optional)
           </Text>
-          
+
           {/* Personal Goal */}
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '500',
-                color: colors.text,
-                marginBottom: 6,
-                opacity: 0.8,
-              }}
-            >
+          <View className="mb-6">
+            <Text className="text-sm font-medium text-foreground mb-1 opacity-80">
               Personal Goal
             </Text>
             <TextInput
-              style={{
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 14,
-              }}
+              className="bg-card rounded-lg p-3 text-foreground text-sm"
               placeholder="e.g., Run a marathon"
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={personalGoal}
               onChangeText={setPersonalGoal}
               maxLength={100}
             />
             {personalGoal.trim() && (
               <TextInput
-                style={{
-                  backgroundColor: colors.card,
-                  borderRadius: 8,
-                  padding: 12,
-                  color: colors.text,
-                  fontSize: 14,
-                  marginTop: 8,
-                  minHeight: 60,
-                  textAlignVertical: 'top',
-                }}
+                className="bg-card rounded-lg p-3 text-foreground text-sm mt-3 min-h-[60px]"
+                style={{ textAlignVertical: 'top' }}
                 placeholder="Describe your personal goal (optional)..."
-                placeholderTextColor={colors.text + '80'}
+                placeholderTextColor="rgb(var(--muted-foreground))"
                 value={personalGoalDescription}
                 onChangeText={setPersonalGoalDescription}
                 multiline
@@ -292,45 +194,23 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
           {/* Professional Goal */}
           <View>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '500',
-                color: colors.text,
-                marginBottom: 6,
-                opacity: 0.8,
-              }}
-            >
+            <Text className="text-sm font-medium text-foreground mb-1 opacity-80">
               Professional Goal
             </Text>
             <TextInput
-              style={{
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 14,
-              }}
+              className="bg-card rounded-lg p-3 text-foreground text-sm"
               placeholder="e.g., Launch project #2"
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={professionalGoal}
               onChangeText={setProfessionalGoal}
               maxLength={100}
             />
             {professionalGoal.trim() && (
               <TextInput
-                style={{
-                  backgroundColor: colors.card,
-                  borderRadius: 8,
-                  padding: 12,
-                  color: colors.text,
-                  fontSize: 14,
-                  marginTop: 8,
-                  minHeight: 60,
-                  textAlignVertical: 'top',
-                }}
+                className="bg-card rounded-lg p-3 text-foreground text-sm mt-3 min-h-[60px]"
+                style={{ textAlignVertical: 'top' }}
                 placeholder="Describe your professional goal (optional)..."
-                placeholderTextColor={colors.text + '80'}
+                placeholderTextColor="rgb(var(--muted-foreground))"
                 value={professionalGoalDescription}
                 onChangeText={setProfessionalGoalDescription}
                 multiline
@@ -342,67 +222,44 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
         {/* Interests */}
         <View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '600',
-              color: colors.text,
-              marginBottom: 8,
-            }}
-          >
+          <Text className="text-base font-semibold text-foreground mb-2">
             Interests
           </Text>
-          
+
           {/* Add Interest Input */}
-          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+          <View className="flex-row gap-2 mb-3">
             <TextInput
-              style={{
-                flex: 1,
-                backgroundColor: colors.card,
-                borderRadius: 8,
-                padding: 12,
-                color: colors.text,
-                fontSize: 14,
-              }}
+              className="flex-1 bg-card rounded-lg p-3 text-foreground text-sm"
               placeholder="Add an interest"
-              placeholderTextColor={colors.text + '80'}
+              placeholderTextColor="rgb(var(--muted-foreground))"
               value={newInterest}
               onChangeText={setNewInterest}
               maxLength={30}
               onSubmitEditing={addInterest}
             />
             <TouchableOpacity
-              style={{
-                backgroundColor: colors.primary,
-                borderRadius: 8,
-                padding: 12,
-                justifyContent: 'center',
-              }}
+              className="bg-primary rounded-lg p-3 justify-center"
               onPress={addInterest}
             >
-              <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>Add</Text>
+              <Text className="text-sm font-medium text-primary-foreground">
+                Add
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Interest Tags */}
           {interests.length > 0 && (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            <View className="flex-row flex-wrap gap-2">
               {interests.map((interest, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderRadius: 16,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 6,
-                  }}
+                  className="bg-card rounded-full px-3 py-1 flex-row items-center gap-1"
                   onPress={() => removeInterest(index)}
                 >
-                  <Text style={{ color: colors.text, fontSize: 12 }}>{interest}</Text>
-                  <Text style={{ color: colors.text, fontSize: 14, opacity: 0.6 }}>×</Text>
+                  <Text className="text-xs text-foreground">
+                    {interest}
+                  </Text>
+                  <Text className="text-sm text-foreground opacity-60">×</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -412,33 +269,17 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 
       {/* Complete Button */}
       <TouchableOpacity
-        style={{
-          backgroundColor: colors.primary,
-          borderRadius: 12,
-          padding: 16,
-          alignItems: 'center',
-          marginTop: 40,
-          marginBottom: 20,
-        }}
+        className="bg-primary rounded-xl p-4 items-center mt-10 mb-5"
         onPress={handleComplete}
       >
-        <Text
-          style={{
-            color: 'white',
-            fontSize: 16,
-            fontWeight: '600',
-          }}
-        >
+        <Text className="text-base font-semibold text-primary-foreground">
           Complete Setup
         </Text>
       </TouchableOpacity>
 
       {/* Skip Button */}
       <TouchableOpacity
-        style={{
-          alignItems: 'center',
-          padding: 12,
-        }}
+        className="items-center p-3"
         onPress={() => onComplete({
           displayName: displayName || 'User',
           bio: '',
@@ -447,13 +288,7 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
           goals: { personal: [], professional: [] },
         })}
       >
-        <Text
-          style={{
-            color: colors.text,
-            fontSize: 14,
-            opacity: 0.7,
-          }}
-        >
+        <Text className="text-sm text-foreground opacity-70">
           Skip for now
         </Text>
       </TouchableOpacity>

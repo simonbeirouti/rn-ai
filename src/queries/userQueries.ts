@@ -39,20 +39,6 @@ export const useUserData = (userId?: string) => {
           hasCompletedOnboarding: privateData?.hasCompletedOnboarding || false,
         };
         
-        console.log('📖 User data fetched from Firebase:', {
-          displayName: userData.displayName,
-          bio: userData.bio,
-          interests: userData.interests,
-          communicationStyle: userData.communicationStyle,
-          goalsFromFirebase: {
-            personal: userData.goals.personal?.length || 0,
-            professional: userData.goals.professional?.length || 0,
-            personalGoals: userData.goals.personal,
-            professionalGoals: userData.goals.professional,
-          },
-          hasCompletedOnboarding: userData.hasCompletedOnboarding,
-        });
-        
         return userData;
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -127,16 +113,6 @@ export const useUpdateUserData = () => {
     mutationFn: async (updates: Partial<UserData>) => {
       if (!user) throw new Error('User not authenticated');
       
-      console.log('🔄 useUpdateUserData called with updates:', {
-        ...updates,
-        goalsStructure: updates.goals ? {
-          personal: updates.goals.personal?.length || 0,
-          professional: updates.goals.professional?.length || 0,
-          personalGoals: updates.goals.personal,
-          professionalGoals: updates.goals.professional,
-        } : 'No goals in update'
-      });
-      
       const updatedData = {
         ...updates,
         updatedAt: new Date(),
@@ -153,14 +129,6 @@ export const useUpdateUserData = () => {
       // Update private profile data
       const privateUpdates: any = { ...updatedData };
       delete privateUpdates.displayName; // Don't duplicate in private doc
-      
-      console.log('💾 Saving to Firebase private profile:', {
-        ...privateUpdates,
-        goalsBeingSaved: privateUpdates.goals ? {
-          personal: privateUpdates.goals.personal?.length || 0,
-          professional: privateUpdates.goals.professional?.length || 0,
-        } : 'No goals being saved'
-      });
       
       await setDoc(doc(db, 'users', user.uid, 'private', 'profile'), privateUpdates, { merge: true });
       
@@ -205,22 +173,10 @@ export const useCompleteOnboarding = () => {
       // Show "Creating personalised AI experience" loading screen
       setAddingProfileInfo(true);
       
-      console.log('🎯 Onboarding data received:', {
-        displayName: onboardingData.displayName,
-        bio: onboardingData.bio,
-        interests: onboardingData.interests,
-        communicationStyle: onboardingData.communicationStyle,
-        goals: onboardingData.goals,
-        personalGoalsCount: onboardingData.goals.personal.length,
-        professionalGoalsCount: onboardingData.goals.professional.length,
-      });
-      
       const result = await updateUserMutation.mutateAsync({
         ...onboardingData,
         hasCompletedOnboarding: true,
       });
-      
-      console.log('✅ Onboarding completion result:', result);
       
       return result;
     },
